@@ -28,7 +28,7 @@ public class Produto {
     }
 
     public void setId(int idBD){
-        if(id<=0){
+        if(idBD<=0){
             throw new NegocioException("ID inválido");
         }
         this.id = idBD;

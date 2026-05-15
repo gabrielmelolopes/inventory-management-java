@@ -3,6 +3,7 @@ package repository;
 import exception.NegocioException;
 import model.Produto;
 
+import javax.xml.transform.Result;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,9 +23,10 @@ public class ProdutoRepositorySQL implements ProdutoRepository {
             stmt.setDouble(2, p.getPreco());
             stmt.setInt(3, p.getQuantidade());
             stmt.executeUpdate();
-            ResultSet rs = stmt.getGeneratedKeys();
-            if(rs.next()){
-                p.setId(rs.getInt(1));
+            try(ResultSet rs = stmt.getGeneratedKeys()){
+                if(rs.next()){
+                    p.setId(rs.getInt(1));
+                }
             }
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao salvar: " + e.getMessage());
@@ -50,10 +52,13 @@ public class ProdutoRepositorySQL implements ProdutoRepository {
             ResultSet rs = stmt.executeQuery();
 
             if(rs.next()) {
-                return new Produto(rs.getString(
-                        "nome"),
+                Produto p = new Produto(
+                        rs.getString("nome"),
                         rs.getDouble("preco"),
-                        rs.getInt("quantidade"));
+                        rs.getInt("quantidade")
+                );
+                p.setId(rs.getInt("id"));
+                return p;
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -73,11 +78,54 @@ public class ProdutoRepositorySQL implements ProdutoRepository {
                     rs.getString("nome"),
                     rs.getDouble("preco"),
                     rs.getInt("quantidade"));
+            prod.setId(rs.getInt("id"));
             lista.add(prod);
         }
         }catch (SQLException e){
             throw new RuntimeException("Erro: " + e.getMessage());
         }
         return lista;
+    }
+
+    @Override
+    public void registrarVenda(int id, int novaQuantidade, int quantidadeVendida) {
+        String sqlUpd = "UPDATE produto SET quantidade = ? WHERE id = ?";
+        String sqlIns = "INSERT INTO historico_vendas(produto_id, quantidade_vendida) VALUES (?, ?)";
+
+        try{
+            conn.setAutoCommit(false); // Desligar a assinatura automática do Banco com o java
+
+            try(PreparedStatement stmtU = conn.prepareStatement(sqlUpd)){
+                stmtU.setInt(1, novaQuantidade);
+                stmtU.setInt(2, id);
+                stmtU.executeUpdate();
+            }
+
+            try(PreparedStatement stmtI = conn.prepareStatement(sqlIns)){
+                stmtI.setInt(1, id);
+                stmtI.setInt(2, quantidadeVendida);
+                stmtI.executeUpdate();
+            }
+
+            conn.commit();
+        }catch (SQLException e){
+            try{
+                if(conn != null){
+                    conn.rollback();
+                    System.err.println("Rollback executado devido a erro: " + e.getMessage());
+                }
+            } catch (SQLException ex) {
+                e.printStackTrace();
+            }
+            throw new RuntimeException("Falha ao registrar venda no banco.");
+        }finally {
+            try{
+                if(conn != null){
+                    conn.setAutoCommit(true);
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

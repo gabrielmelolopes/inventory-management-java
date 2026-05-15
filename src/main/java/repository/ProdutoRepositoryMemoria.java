@@ -25,6 +25,11 @@ public class ProdutoRepositoryMemoria implements ProdutoRepository{
     }
 
     @Override
+    public void registrarVenda(int id, int novaQuantidade, int quantidadeVendida) {
+
+    }
+
+    @Override
     public void removerPorId(int id){dados.remove(id);}
 
 }

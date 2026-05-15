@@ -15,7 +15,7 @@ public class EstoqueService {
 
     public void salvarProduto(Produto produto){
         if(repository.buscarPorId(produto.getId()) != null){
-            throw new NegocioException("Não é possível salvar: ID " + produto.getId() + " já esta em uso.");
+            throw new NegocioException("Não é possível salvar: ID " + produto.getId() + " já está em uso.");
         }
 
         if(produto.getPreco() > 5000){
@@ -36,11 +36,21 @@ public class EstoqueService {
     }
 
     public void removerProduto(int id){
-        List<Produto> list = repository.listarTodos();
-        if(list.isEmpty())
-            throw new NegocioException("Estoque vazio");
         if(repository.buscarPorId(id) == null)
             throw new NegocioException("ID inexistente");
         repository.removerPorId(id);
+    }
+
+    public void venderProduto(int id, int quantidadeVendida){
+        Produto p = repository.buscarPorId(id);
+        if(p == null){
+            throw new NegocioException("ID inexistente");
+        }
+        if(quantidadeVendida > p.getQuantidade()){
+            throw new NegocioException("Quantidade excedida");
+        }
+        int newQNTD = p.getQuantidade() - quantidadeVendida;
+
+        repository.registrarVenda(id, newQNTD, quantidadeVendida);
     }
 }

@@ -4,7 +4,7 @@ import java.sql.DriverManager;
 import java.sql.Connection;
 import java.sql.SQLException;
 public class ConnectionFactory {
-    private static final String URL = "jdbc:postgresql://localhost:5432/estoque_db";
+    private static final String URL = "jdbc:postgresql://localhost:5432/estoque_banco";
     private static final String USER = "admin";
     private static final String PASS = "admin";
 

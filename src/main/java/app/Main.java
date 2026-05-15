@@ -22,12 +22,13 @@ public class Main
     {
         int op;
         do {
-            System.out.println("====================");
+            System.out.println("===================================");
             System.out.println("1 - Adicionar produto ao estoque");
             System.out.println("2 - Remover produto do estoque");
             System.out.println("3 - Ver produtos no estoque");
+            System.out.println("4 - Vender produto");
             System.out.println("0 - Parar programa");
-            System.out.println("====================");
+            System.out.println("=================================== ");
             op = sc.nextInt();
             sc.nextLine();
 
@@ -35,6 +36,7 @@ public class Main
                 case 1 ->{adicionarProduto();}
                 case 2 ->{removerProduto();}
                 case 3 ->{verProdutos();}
+                case 4 ->{venderProduto();}
                 case 0 ->{
                     System.out.println("encerrando...");}
                 default ->{
@@ -59,19 +61,19 @@ public class Main
         }catch(NegocioException e){
             System.out.println("Erro: " + e.getMessage());
         }catch(Exception e){
-            System.out.println("Erro crítico.");
+            System.out.println("Erro: " + e.getMessage());
         }
     }
     public static void removerProduto(){
         try{
-            System.out.println("ID: ");
+            System.out.print("ID: ");
             int idProduto = sc.nextInt();
             sc.nextLine();
             service.removerProduto(idProduto);
         }catch (NegocioException e){
             System.out.println("Erro: " + e.getMessage());
         } catch (Exception e) {
-            System.out.println("Erro crítico.");
+            System.out.println("Erro: " + e.getMessage());
         }
     }
 
@@ -84,8 +86,16 @@ public class Main
         }catch(NegocioException e){
             System.out.println("Erro: " + e.getMessage());
         }catch (Exception e){
-            System.out.println("Erro crítico.");
+            System.out.println(e.getMessage());
         }
     }
+    public static void venderProduto(){
+        System.out.print("ID do produto: ");
+        int idProduto = sc.nextInt();
+        System.out.print("Quantidade a vender: ");
+        int qntdProduto = sc.nextInt();
+        sc.nextLine();
 
+        service.venderProduto(idProduto, qntdProduto);
+    }
 }

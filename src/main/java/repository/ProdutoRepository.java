@@ -9,4 +9,5 @@ public interface ProdutoRepository {
     void removerPorId(int id);
     Produto buscarPorId(int id);
     List<Produto> listarTodos();
+    void registrarVenda(int id, int novaQuantidade, int quantidadeVendida);
 }
