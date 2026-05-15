@@ -61,6 +61,7 @@ CREATE TABLE historico_vendas (
     data_venda TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_produto FOREIGN KEY (produto_id) REFERENCES produto(id) ON DELETE CASCADE
 );
+```
 ---
 
 ### 3. Executar projeto
