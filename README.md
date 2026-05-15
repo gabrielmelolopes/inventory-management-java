@@ -42,7 +42,7 @@ docker run --name postgres-db \
 
 ---
 
-### 2. Criar tabela
+### 2. Criar tabelas
 
 ```sql
 CREATE TABLE produto (
@@ -53,6 +53,14 @@ CREATE TABLE produto (
 );
 ```
 
+```sql
+CREATE TABLE historico_vendas (
+    id SERIAL PRIMARY KEY,
+    produto_id INT NOT NULL,
+    quantidade_vendida INT NOT NULL,
+    data_venda TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_produto FOREIGN KEY (produto_id) REFERENCES produto(id) ON DELETE CASCADE
+);
 ---
 
 ### 3. Executar projeto
